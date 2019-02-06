@@ -1,57 +1,45 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
-    <name>Magic Link</name>
-    <description>Generates authenticated links for keycloak</description>
-
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <version>0.0.0</version>
 
+    <groupId>ie.ianduffy.keycloak</groupId>
     <artifactId>magic-link</artifactId>
-    <groupId>com.shipyard</groupId>
-
-    <packaging>jar</packaging>
+    <version>0.0.1</version>
 
     <properties>
-        <!-- Build properties -->
-        <maven.version>3.0.0</maven.version>
-        <java.version>1.8</java.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <project.testresult.directory>${project.build.directory}/test-results</project.testresult.directory>
-        <maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
-        <maven.compiler.source>${java.version}</maven.compiler.source>
-        <maven.compiler.target>${java.version}</maven.compiler.target>
-        <maven.deploy.skip>true</maven.deploy.skip>
-        <argLine>-Djava.security.egd=file:/dev/./urandom -Xmx256m</argLine>
-
-        <!-- Plugin versions -->
-        <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
-        <wildfly-maven-plugin.version>2.0.0.Final</wildfly-maven-plugin.version>
-
-        <!-- Dependency versions -->
+        <jboss-jms-spec.version>1.0.0.Final</jboss-jms-spec.version>
         <keycloak.version>4.8.3.Final</keycloak.version>
+        <lombok.version>1.18.4</lombok.version>
+
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <url>git:gh-pages://git@github.com:imduffy15/maven.ianduffy.ie.git</url>
+    
     <dependencies>
         <dependency>
-            <groupId>org.keycloak</groupId>
-            <artifactId>keycloak-core</artifactId>
-            <version>${keycloak.version}</version>
-            <scope>provided</scope>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <optional>true</optional>
         </dependency>
-        <dependency>
-            <groupId>org.keycloak</groupId>
-            <artifactId>keycloak-server-spi</artifactId>
-            <version>${keycloak.version}</version>
-            <scope>provided</scope>
-        </dependency>
+
         <dependency>
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-server-spi-private</artifactId>
             <version>${keycloak.version}</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-server-spi</artifactId>
+            <version>${keycloak.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-services</artifactId>
@@ -61,26 +49,30 @@
     </dependencies>
 
     <build>
-        <finalName>magic-link</finalName>
-
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>${maven-compiler-plugin.version}</version>
-                <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.wildfly.plugins</groupId>
-                <artifactId>wildfly-maven-plugin</artifactId>
-                <version>${wildfly-maven-plugin.version}</version>
-                <configuration>
-                    <skip>false</skip>
-                </configuration>
-            </plugin>
-        </plugins>
+        <extensions>
+            <extension>
+                <groupId>ar.com.synergian</groupId>
+                <artifactId>wagon-git</artifactId>
+                <version>0.2.5</version>
+            </extension>
+        </extensions>
     </build>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>synergian-repo</id>
+            <url>https://raw.github.com/synergian/wagon-git/releases</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <repositories>
+        <repository>
+            <id>jboss</id>
+            <url>https://repository.jboss.org/nexus/content/groups/public/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
 </project>

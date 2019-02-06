@@ -1,0 +1,29 @@
+language: java
+jdk:
+- openjdk8
+cache:
+ directories:
+ - "$HOME/.m2"
+before_install:
+- export APP_VERSION="`mvn org.apache.maven.plugins:maven-help-plugin:2.1.1:evaluate -Dexpression=project.version | grep -Ev '(^\[|Download\w+:)'`-$TRAVIS_BUILD_NUMBER"
+script:
+- mvn versions:set -DnewVersion=$APP_VERSION
+- mvn clean package
+before_deploy:
+- git config --global user.email "builds@travis-ci.com"
+- git config --global user.name "Travis CI"
+- git commit -a -m "Set version to $APP_VERSION"
+- git tag $APP_VERSION -a -m "Generated tag from TravisCI for $APP_VERSION"
+- git push -q -f https://$GITHUB_API_KEY@github.com/imduffy15/keycloak-magic-link --tags
+deploy:
+  skip_cleanup: true
+  provider: releases
+  api_key: $GITHUB_API_KEY
+  file: target/magic-link-$APP_VERSION.jar
+  on:
+    repo: imduffy15/keycloak-magic-link
+    tags: false
+    branch: master
+env:
+  global:
+    secure: NR6+SKBGYzPeErpIdUwx4v6/n6S5ehkw5aLJhsFrAG7GFX0OICaajeDtUSuVkkkIgiJS2I1NVbMe+P2iOi9rgU9KnZKB4j8igkNCcuqrsOVQxRIdDtPYRBL9SNgsye5yWcmBAWddRrlWKnohX3NbjwcrJ9WMN9hlKghbIJZA/zdED2NishY2182QZ9VbZ5HllR6ZYY+gKX1cVJKvbY78FYeOjMbHHH+/b68Rb2yvo/qAndmIRqaMd1BIIMUrgVX+QA4EG6nRgG0dJbGwhQVT56UlD5HcZ4GYMsRI8ODmZwpIk0K/82b4VXV16U4FUUTYu6qZeRZOoUA0ExgfR1IWZcn85Fncjt4NNGuQUBpvSBpOS03nIM+Llxi12Rotj4+qRrON8SC7h9AN/vEQYu/yo63UWXQzPvqqfuooUp0+0TphJ4gpdFCcjB1BUterLJO9NGChmUXX9JSouajqQsz6EvznEUf5fEMsPjniZVbfwrq/9jOAzAGJdo4pdO29eFpgKaZSnuGLtYYRNMm+6RpZjuRvWe3wLELGbEO77yfjmE+omzf3XXP4CorKqouiokk6DeBAWCPPMxlnkBEqSv9Egt0svHJc0/8bO1+fr2Sr5lMJwydUhC34/M2OVfSdIxAjfYM4P14hYJ9a9O90TU40ipQYADKbdUNolMZKX8s55UY=
